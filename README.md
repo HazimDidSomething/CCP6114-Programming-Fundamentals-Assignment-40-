@@ -1,6 +1,9 @@
 Member 1	Sheet & Column Setup – Ask for sheet name, define columns, store column names & types
+
 Member 2	Data Entry & Validation – Loop to input rows, check INT/TEXT types, store in array
+
 Member 3	CSV Display & Output – Print the attendance sheet in CSV format
+
 Member 4	Documentation & Header – Write program header, add comments, pseudocode, and sample input/output
 
 
