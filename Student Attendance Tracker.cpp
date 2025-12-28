@@ -17,12 +17,13 @@
 // *********************************************************
 
 #include <iostream>
+#include <string>
 using namespace std;
 int main()
 {
     // VARIABLES
     string SheetName, ColName[10], ColType[10], TypeChecker;
-    int NumOfCol, ColCount = 1;
+    int NumOfCol, ColCount = 0;
 
     cout << "STUDENT ATTENDANCE TRACKER - MILESTONE 1" << endl;
     cout << "Enter attendance sheet name: ";
@@ -32,21 +33,30 @@ int main()
 
     cout << "Define number of columns (max 10): ";
     cin >> NumOfCol;
-
+    while (NumOfCol < 1 || NumOfCol > 10)
+    {
+        cout << "Invalid number of columns. Please enter a number between 1 and 10: ";
+        cin >> NumOfCol;
+    }
+    cin.ignore();
     cout << "Define " << NumOfCol << " columns." << endl;
 
     while (NumOfCol != 0)
     {
-        cout << "Enter column" << ColCount << " name: ";
-        cin >> ColName[ColCount];
+        cout << "Enter column " << ColCount + 1 << " name: ";
+        getline(cin, ColName[ColCount]);
         while (true)
         {
-            cout << "Enter column" << ColCount << "type (TEXT/INT): ";
+            cout << "Enter column " << ColCount + 1 << " type (TEXT/INT): ";
             cin >> TypeChecker;
-            if (TypeChecker == "TEXT" || TypeChecker == "INT")
+            if (TypeChecker == "TEXT" || TypeChecker == "INT" || TypeChecker == "text" || TypeChecker == "int")
             {
+                if (TypeChecker == "text")
+                    TypeChecker = "TEXT";
+                else if (TypeChecker == "int")
+                    TypeChecker = "INT";
                 ColType[ColCount] = TypeChecker;
-                cout << "Column" << ColCount << " \"" << ColName[ColCount] << "\" of type " << ColType[ColCount] << " created successfully." << endl;
+                cout << "Column" << ColCount + 1 << " \"" << ColName[ColCount] << "\" of type " << ColType[ColCount] << " created successfully." << endl;
                 break;
             }
             else
