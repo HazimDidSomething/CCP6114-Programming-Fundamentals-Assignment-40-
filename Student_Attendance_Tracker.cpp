@@ -18,37 +18,50 @@
 
 #include <iostream>
 #include <string>
+#include <limits>
+#include <cctype>
 
 using namespace std;
 
-bool isInteger(const string &s) {
-    if (s.empty()) return false;
-    for (char c : s) {
-        if (!isdigit(c)) return false;
+bool isInteger(const string &s)
+{
+    if (s.empty())
+        return false;
+    for (char c : s)
+    {
+        if (!isdigit(c))
+            return false;
     }
     return true;
 }
 
 // Function: Display the sheet in CSV format
-void displayCSV(string sheet[][10], int rowCount, string ColName[], int ColCount) {
+void displayCSV(string sheet[][10], int rowCount, string ColName[], int ColCount)
+{
     // Print column headers
-    for (int i = 0; i < ColCount; i++) {
+    for (int i = 0; i < ColCount; i++)
+    {
         cout << ColName[i];
-        if (i < ColCount - 1) cout << ", ";
+        if (i < ColCount - 1)
+            cout << ", ";
     }
     cout << endl;
 
     // Print the rows of the sheet
-    for (int i = 0; i < rowCount; i++) {
-        for (int j = 0; j < ColCount; j++) {
+    for (int i = 0; i < rowCount; i++)
+    {
+        for (int j = 0; j < ColCount; j++)
+        {
             cout << sheet[i][j];
-            if (j < ColCount - 1) cout << ", ";
+            if (j < ColCount - 1)
+                cout << ", ";
         }
         cout << endl;
     }
 }
 
-int main() {
+int main()
+{
     // VARIABLES
     string SheetName, ColName[10], ColType[10], TypeChecker;
     int NumOfCol, ColCount = 0;
@@ -63,12 +76,14 @@ int main() {
 
     cout << "Attendance sheet \"" << SheetName << "\" created successfully." << endl;
 
-    while (true) {
+    while (true)
+    {
         cout << "Define number of columns (max 10): ";
         string input;
         getline(cin, input);
 
-        if (isInteger(input)) {
+        if (isInteger(input))
+        {
             NumOfCol = stoi(input);
             if (NumOfCol >= 1 && NumOfCol <= 10)
                 break;
@@ -78,23 +93,30 @@ int main() {
 
     cout << "Define " << NumOfCol << " columns.\n";
 
-    while (ColCount < NumOfCol) {
+    while (ColCount < NumOfCol)
+    {
         cout << "Enter column " << ColCount + 1 << " name: ";
         getline(cin, ColName[ColCount]);
 
-        while (true) {
+        while (true)
+        {
             cout << "Enter column " << ColCount + 1 << " type (TEXT/INT): ";
             cin >> TypeChecker;
-            cin.ignore(); // Clean buffer so next getline works (same goes with line 144)
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
-            if (TypeChecker == "TEXT" || TypeChecker == "INT" || TypeChecker == "text" || TypeChecker == "int") {
-                if (TypeChecker == "text") TypeChecker = "TEXT";
-                else if (TypeChecker == "int") TypeChecker = "INT";
+            if (TypeChecker == "TEXT" || TypeChecker == "INT" || TypeChecker == "text" || TypeChecker == "int")
+            {
+                if (TypeChecker == "text")
+                    TypeChecker = "TEXT";
+                else if (TypeChecker == "int")
+                    TypeChecker = "INT";
 
                 ColType[ColCount] = TypeChecker;
                 cout << "Column " << ColCount + 1 << " \"" << ColName[ColCount] << "\" of type " << ColType[ColCount] << " created successfully." << endl;
                 break;
-            } else {
+            }
+            else
+            {
                 cout << "Invalid column type. Please enter either TEXT or INT." << endl;
             }
         }
@@ -103,28 +125,40 @@ int main() {
 
     // ----------- DATA ENTRY & VALIDATION -----------
     char addMore = 'Y';
-    while (toupper(addMore) == 'Y' && rowCount < MAX_ROWS) {
+    while (toupper(addMore) == 'Y' && rowCount < MAX_ROWS)
+    {
         cout << "\nEntering data for row " << rowCount + 1 << ":\n";
-        for (int i = 0; i < ColCount; i++) {
+        for (int i = 0; i < ColCount; i++)
+        {
             string input;
-            while (true) {
+            while (true)
+            {
                 cout << ColName[i] << " (" << ColType[i] << "): ";
 
                 getline(cin, input);
 
-                if (ColType[i] == "INT") {
-                    if (!isInteger(input)) {
+                if (ColType[i] == "INT")
+                {
+                    if (!isInteger(input))
+                    {
                         cout << "Invalid input. Please enter an integer." << endl;
                         continue;
-                    } else if (stoi(input) < 0) {
+                    }
+                    else if (stoi(input) < 0)
+                    {
                         cout << "Invalid input. Please enter a positive integer." << endl;
                         continue;
                     }
-                } else if (ColType[i] == "TEXT") {
-                    if (input.empty()) {
+                }
+                else if (ColType[i] == "TEXT")
+                {
+                    if (input.empty())
+                    {
                         cout << "Invalid input. Text cannot be empty." << endl;
                         continue;
-                    } else if (input.length() > 50) {
+                    }
+                    else if (input.length() > 50)
+                    {
                         cout << "Input is too long. Please enter less than 50 characters." << endl;
                         continue;
                     }
@@ -136,10 +170,12 @@ int main() {
         }
         rowCount++;
 
-        while (true) {
+        while (true)
+        {
             cout << "Add another row? (Y/N): ";
             cin >> addMore;
-            cin.ignore();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+
             addMore = toupper(addMore);
             if (addMore == 'Y' || addMore == 'N')
                 break;
