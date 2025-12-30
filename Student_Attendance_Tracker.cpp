@@ -20,9 +20,12 @@
 #include <string>
 using namespace std;
 
-bool isInteger(const string &s) {
-    for (char c : s) {
-        if (!isdigit(c)) return false;
+bool isInteger(const string &s)
+{
+    for (char c : s)
+    {
+        if (!isdigit(c))
+            return false;
     }
     return !s.empty();
 }
@@ -35,20 +38,28 @@ int main()
     const int MAX_ROWS = 50;
     string sheet[MAX_ROWS][10];
     int rowCount = 0;
-
+    // ----------- SHEET & COLUMN SETUP -----------
     cout << "STUDENT ATTENDANCE TRACKER - MILESTONE 1" << endl;
     cout << "Enter attendance sheet name: ";
     getline(cin, SheetName);
 
     cout << "Attendance sheet \"" << SheetName << "\" created successfully." << endl;
-
-    cout << "Define number of columns (max 10): ";
-    cin >> NumOfCol;
-    while (NumOfCol < 1 || NumOfCol > 10)
+    while (true)
     {
-        cout << "Invalid number of columns. Please enter a number between 1 and 10: ";
-        cin >> NumOfCol;
+        cout << "Define number of columns (max 10): ";
+        string input;
+        getline(cin, input);
+
+        if (isInteger(input))
+        {
+            NumOfCol = stoi(input);
+            if (NumOfCol >= 1 && NumOfCol <= 10)
+                break;
+        }
+        cout << "Invalid input. Please enter a number between 1 and 10." << endl;
     }
+    cout << "Define " << NumOfCol << " columns.\n";
+
     cin.ignore();
 
     cout << "Define " << NumOfCol << " columns." << endl;
@@ -64,8 +75,10 @@ int main()
             cin >> TypeChecker;
             if (TypeChecker == "TEXT" || TypeChecker == "INT" || TypeChecker == "text" || TypeChecker == "int")
             {
-                if (TypeChecker == "text") TypeChecker = "TEXT";
-                else if (TypeChecker == "int") TypeChecker = "INT";
+                if (TypeChecker == "text")
+                    TypeChecker = "TEXT";
+                else if (TypeChecker == "int")
+                    TypeChecker = "INT";
 
                 ColType[ColCount] = TypeChecker;
                 cout << "Column " << ColCount + 1 << " \"" << ColName[ColCount] << "\" of type " << ColType[ColCount] << " created successfully." << endl;
@@ -99,12 +112,12 @@ int main()
                     if (!isInteger(input))
                     {
                         cout << "Invalid input. Please enter an integer." << endl;
-                        continue; 
+                        continue;
                     }
-                    else if (stoi(input) < 0) 
+                    else if (stoi(input) < 0)
                     {
                         cout << "Invalid input. Please enter a positive integer." << endl;
-                        continue; 
+                        continue;
                     }
                 }
 
