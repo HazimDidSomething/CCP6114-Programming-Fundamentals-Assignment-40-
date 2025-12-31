@@ -35,7 +35,7 @@ bool isInteger(const string &s)
     return true;
 }
 
-// Function to display the sheet in CSV format
+// Function: Display sheet in CSV format
 void displayCSV(string sheet[][10], int rowCount, string ColName[], int ColCount)
 {
     // Print column headers
@@ -47,7 +47,7 @@ void displayCSV(string sheet[][10], int rowCount, string ColName[], int ColCount
     }
     cout << endl;
 
-    // Print the rows of the sheet
+    // Print the rows of sheet
     for (int i = 0; i < rowCount; i++)
     {
         for (int j = 0; j < ColCount; j++)
@@ -132,45 +132,39 @@ int main()
         cout << "\n-------------------------------------------" << endl;
         cout << "Insert New Attendance (Row " << rowCount + 1 << ")" << endl;
         cout << "-------------------------------------------" << endl;
-        for (int i = 0; i < ColCount; i++)
+
+        string studentID, studentName, status;
+        while (true)
         {
-            string input;
-            while (true)
+            cout << "Enter ID: ";
+            getline(cin, studentID);
+            if (!isInteger(studentID))
             {
-                cout << ColName[i] << " (" << ColType[i] << "): ";
-
-                getline(cin, input);
-
-                if (ColType[i] == "INT")
-                {
-                    if (!isInteger(input))
-                    {
-                        cout << "Invalid input. Please enter an integer." << endl;
-                        continue;
-                    }
-                    else if (stoi(input) < 0)
-                    {
-                        cout << "Invalid input. Please enter a positive integer." << endl;
-                        continue;
-                    }
-                }
-                else if (ColType[i] == "TEXT")
-                {
-                    if (input.empty())
-                    {
-                        cout << "Invalid input. Text cannot be empty." << endl;
-                        continue;
-                    }
-                    else if (input.length() > 50)
-                    {
-                        cout << "Input is too long. Please enter less than 50 characters." << endl;
-                        continue;
-                    }
-                }
-
-                sheet[rowCount][i] = input;
-                break;
+                cout << "Invalid ID. Please enter a valid integer ID." << endl;
+                continue;
             }
+
+            cout << "Enter Name: ";
+            getline(cin, studentName);
+            if (studentName.empty())
+            {
+                cout << "Name cannot be empty. Please enter a valid name." << endl;
+                continue;
+            }
+
+            cout << "Status (1 = Present, 0 = Absent): ";
+            getline(cin, status);
+            if (status != "1" && status != "0")
+            {
+                cout << "Invalid status. Please enter 1 for Present or 0 for Absent." << endl;
+                continue;
+            }
+
+            // Store values in array
+            sheet[rowCount][0] = studentID;
+            sheet[rowCount][1] = studentName;
+            sheet[rowCount][2] = status;
+            break;
         }
         rowCount++;
 
@@ -189,7 +183,6 @@ int main()
     }
 
     // ----------- DISPLAY THE ATTENDANCE SHEET IN CSV FORMAT -----------
-
     cout << "\n-------------------------------------------" << endl;
     cout << "View Attendance Sheet (CSV Mode)" << endl;
     cout << "-------------------------------------------" << endl;
