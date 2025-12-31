@@ -1,8 +1,8 @@
 // *********************************************************
 // Program: Student Attendance Tracker.cpp
 // Course: CCP6114 Programming Fundamentals
-// Lecture Class: TC1L
-// Tutorial Class: TT4L
+// Lecture Class: TC4L
+// Tutorial Class: T13L
 // Trimester: 2530
 // Member_1: 253UC246FX | Hazim Zubair | hazim.zubair1@student.mmu.edu.my
 // Member_2: 253UC2454U | Aemir Mussadiq bin Aemir Firdauz | aemir.mussadiq.aemir1@student.mmu.edu.my
