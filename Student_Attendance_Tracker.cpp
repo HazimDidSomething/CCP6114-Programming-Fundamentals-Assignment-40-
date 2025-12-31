@@ -35,7 +35,7 @@ bool isInteger(const string &s)
     return true;
 }
 
-// Function: Display the sheet in CSV format
+// Function to display the sheet in CSV format
 void displayCSV(string sheet[][10], int rowCount, string ColName[], int ColCount)
 {
     // Print column headers
@@ -70,10 +70,12 @@ int main()
     int rowCount = 0;
 
     // ----------- SHEET & COLUMN SETUP -----------
+    cout << "===========================================" << endl;
     cout << "STUDENT ATTENDANCE TRACKER - MILESTONE 1" << endl;
+    cout << "===========================================" << endl;
+
     cout << "Enter attendance sheet name: ";
     getline(cin, SheetName);
-
     cout << "Attendance sheet \"" << SheetName << "\" created successfully." << endl;
 
     while (true)
@@ -127,7 +129,9 @@ int main()
     char addMore = 'Y';
     while (toupper(addMore) == 'Y' && rowCount < MAX_ROWS)
     {
-        cout << "\nEntering data for row " << rowCount + 1 << ":\n";
+        cout << "\n-------------------------------------------" << endl;
+        cout << "Insert New Attendance (Row " << rowCount + 1 << ")" << endl;
+        cout << "-------------------------------------------" << endl;
         for (int i = 0; i < ColCount; i++)
         {
             string input;
@@ -185,8 +189,15 @@ int main()
     }
 
     // ----------- DISPLAY THE ATTENDANCE SHEET IN CSV FORMAT -----------
-    cout << "\nAttendance Sheet in CSV Format:\n";
+
+    cout << "\n-------------------------------------------" << endl;
+    cout << "View Attendance Sheet (CSV Mode)" << endl;
+    cout << "-------------------------------------------" << endl;
     displayCSV(sheet, rowCount, ColName, ColCount);
+
+    cout << "\n-------------------------------------------" << endl;
+    cout << "End of Milestone 1 Output, Great Input!" << endl;
+    cout << "-------------------------------------------" << endl;
 
     return 0;
 }
