@@ -177,7 +177,20 @@ int main()
                         cout << "Invalid input. Please enter an integer." << endl;
                         continue;
                     }
-                    else if (stoi(input) < 0)
+
+                    int value = stoi(input);
+
+                    // Special validation for Status / Attendance
+                    if (ColName[i] == "Status (Present: 1, Absent: 0)" ||
+                        ColName[i] == "Attendance (Present: 1, Absent: 0)")
+                    {
+                        if (value != 0 && value != 1)
+                        {
+                            cout << "Invalid input. Please enter 1 (Present) or 0 (Absent)." << endl;
+                            continue;
+                        }
+                    }
+                    else if (value < 0)
                     {
                         cout << "Invalid input. Please enter a positive integer." << endl;
                         continue;
@@ -207,7 +220,7 @@ int main()
         {
             cout << "Add another row? (Y/N): ";
             cin >> addMore;
-            cin.ignore();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
             addMore = toupper(addMore);
             if (addMore == 'Y' || addMore == 'N')
                 break;
@@ -225,6 +238,9 @@ int main()
     cout << "\n-------------------------------------------" << endl;
     cout << "End of Milestone 1 Output, Great Input!" << endl;
     cout << "-------------------------------------------" << endl;
+
+    cout << "\nPress Enter to exit...";
+    cin.get();
 
     return 0;
 }
