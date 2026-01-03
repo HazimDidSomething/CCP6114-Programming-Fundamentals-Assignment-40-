@@ -80,7 +80,7 @@ int main()
 
     while (true)
     {
-        cout << "Define number of columns (max 10): ";
+        cout << "\nDefine number of columns (max 10): ";
         string input;
         getline(cin, input);
 
@@ -97,7 +97,7 @@ int main()
 
     while (ColCount < NumOfCol)
     {
-        cout << "Enter column " << ColCount + 1 << " name: ";
+        cout << "\nEnter column " << ColCount + 1 << " name: ";
         getline(cin, ColName[ColCount]);
         if (ColName[ColCount].empty() || ColName[ColCount].find_first_not_of(' ') == string::npos)
         {
@@ -113,14 +113,14 @@ int main()
 
         if (ColName[ColCount] == "status" || ColName[ColCount] == "STATUS" || ColName[ColCount] == "Status")
         {
-            cout << "Column name \"Status\" is reserved. Please use \"Status (Present: 1, Absent: 0)\" instead." << endl;
+            cout << "Column name \"Status\" is changed to \"Status (Present: 1, Absent: 0)\" instead." << endl;
             ColName[ColCount] = "Status (Present: 1, Absent: 0)";
             ColType[ColCount] = "INT";
             cout << "Column " << ColCount + 1 << " \"" << ColName[ColCount] << "\" of type " << ColType[ColCount] << " created successfully." << endl;
         }
         if (ColName[ColCount] == "Attendance" || ColName[ColCount] == "ATTENDANCE" || ColName[ColCount] == "attendance")
         {
-            cout << "Column name \"Attendance\" is reserved. Renaming to \"Attendance (Present: 1, Absent: 0)\"." << endl;
+            cout << "Column name \"Attendance\" is changed to \"Attendance (Present: 1, Absent: 0)\" instead." << endl;
             ColName[ColCount] = "Attendance (Present: 1, Absent: 0)";
             ColType[ColCount] = "INT";
 
@@ -158,42 +158,46 @@ int main()
     char addMore = 'Y';
     while (toupper(addMore) == 'Y' && rowCount < MAX_ROWS)
     {
-        cout << "\n-------------------------------------------" << endl;
-        cout << "Insert New Attendance (Row " << rowCount + 1 << ")" << endl;
-        cout << "-------------------------------------------" << endl;
-
-        string studentID, studentName, status;
-        while (true)
+        cout << "\nEntering data for row " << rowCount + 1 << ":\n";
+        for (int i = 0; i < ColCount; i++)
         {
-            cout << "Enter ID: ";
-            getline(cin, studentID);
-            if (!isInteger(studentID))
+            string input;
+            while (true)
             {
-                cout << "Invalid ID. Please enter a valid integer ID." << endl;
-                continue;
-            }
+                cout << ColName[i] << " (" << ColType[i] << "): ";
 
-            cout << "Enter Name: ";
-            getline(cin, studentName);
-            if (studentName.empty())
-            {
-                cout << "Name cannot be empty. Please enter a valid name." << endl;
-                continue;
-            }
+                getline(cin, input);
 
-            cout << "Status (1 = Present, 0 = Absent): ";
-            getline(cin, status);
-            if (status != "1" && status != "0")
-            {
-                cout << "Invalid status. Please enter 1 for Present or 0 for Absent." << endl;
-                continue;
-            }
+                if (ColType[i] == "INT")
+                {
+                    if (!isInteger(input))
+                    {
+                        cout << "Invalid input. Please enter an integer." << endl;
+                        continue;
+                    }
+                    else if (stoi(input) < 0)
+                    {
+                        cout << "Invalid input. Please enter a positive integer." << endl;
+                        continue;
+                    }
+                }
+                else if (ColType[i] == "TEXT")
+                {
+                    if (input.empty())
+                    {
+                        cout << "Invalid input. Text cannot be empty." << endl;
+                        continue;
+                    }
+                    else if (input.length() > 50)
+                    {
+                        cout << "Input is too long. Please enter less than 50 characters." << endl;
+                        continue;
+                    }
+                }
 
-            // Store values in array
-            sheet[rowCount][0] = studentID;
-            sheet[rowCount][1] = studentName;
-            sheet[rowCount][2] = status;
-            break;
+                sheet[rowCount][i] = input;
+                break;
+            }
         }
         rowCount++;
 
@@ -201,8 +205,7 @@ int main()
         {
             cout << "Add another row? (Y/N): ";
             cin >> addMore;
-            cin.ignore(numeric_limits<streamsize>::max(), '\n');
-
+            cin.ignore();
             addMore = toupper(addMore);
             if (addMore == 'Y' || addMore == 'N')
                 break;
