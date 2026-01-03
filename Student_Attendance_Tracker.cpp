@@ -158,7 +158,9 @@ int main()
     char addMore = 'Y';
     while (toupper(addMore) == 'Y' && rowCount < MAX_ROWS)
     {
-        cout << "\nEntering data for row " << rowCount + 1 << ":\n";
+        cout << "\n-------------------------------------------" << endl;
+        cout << "Insert New Attendance (Row " << rowCount + 1 << ")" << endl;
+        cout << "-------------------------------------------" << endl;
         for (int i = 0; i < ColCount; i++)
         {
             string input;
