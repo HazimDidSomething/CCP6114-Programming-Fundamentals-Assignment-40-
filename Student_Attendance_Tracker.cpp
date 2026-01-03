@@ -99,9 +99,38 @@ int main()
     {
         cout << "Enter column " << ColCount + 1 << " name: ";
         getline(cin, ColName[ColCount]);
+        if (ColName[ColCount].empty() || ColName[ColCount].find_first_not_of(' ') == string::npos)
+        {
+            cout << "Column name cannot be empty. Please enter a valid name." << endl;
+            continue;
+        }
+
+        // remove the spaces from the column name
+        size_t first = ColName[ColCount].find_first_not_of(' ');
+        size_t last = ColName[ColCount].find_last_not_of(' ');
+        if (first != string::npos && last != string::npos)
+            ColName[ColCount] = ColName[ColCount].substr(first, (last - first + 1));
+
+        if (ColName[ColCount] == "status" || ColName[ColCount] == "STATUS" || ColName[ColCount] == "Status")
+        {
+            cout << "Column name \"Status\" is reserved. Please use \"Status (Present: 1, Absent: 0)\" instead." << endl;
+            ColName[ColCount] = "Status (Present: 1, Absent: 0)";
+            ColType[ColCount] = "INT";
+            cout << "Column " << ColCount + 1 << " \"" << ColName[ColCount] << "\" of type " << ColType[ColCount] << " created successfully." << endl;
+        }
+        if (ColName[ColCount] == "Attendance" || ColName[ColCount] == "ATTENDANCE" || ColName[ColCount] == "attendance")
+        {
+            cout << "Column name \"Attendance\" is reserved. Renaming to \"Attendance (Present: 1, Absent: 0)\"." << endl;
+            ColName[ColCount] = "Attendance (Present: 1, Absent: 0)";
+            ColType[ColCount] = "INT";
+
+            cout << "Column " << ColCount + 1 << " \"" << ColName[ColCount] << "\" of type " << ColType[ColCount] << " created successfully." << endl;
+        }
 
         while (true)
         {
+            if (ColName[ColCount] == "Status (Present: 1, Absent: 0)" || ColName[ColCount] == "Attendance (Present: 1, Absent: 0)")
+                break;
             cout << "Enter column " << ColCount + 1 << " type (TEXT/INT): ";
             cin >> TypeChecker;
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
