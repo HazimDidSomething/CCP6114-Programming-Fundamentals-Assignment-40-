@@ -17,6 +17,7 @@
 // *********************************************************
 
 #include <iostream>
+#include <fstream>  // For file handling
 #include <string>
 #include <limits>
 #include <cctype>
@@ -191,6 +192,98 @@ void sheetCreation()
     cout << "\nAttendance sheet \"" << SheetName << "\" saved successfully!\n";
 }
 
+// Function to save data to CSV file
+void saveToFile()
+{
+    ofstream file("C:\\Users\\USER01\\Documents\\ADIK\\Programming Fundamentals\\Milestone 2\\CCP6114-Programming-Fundamentals-Assignment-40-\\Student_Attendance_Tracker 2_data.csv");
+    if (!file.is_open())
+    {
+        cout << "Error when opening file to save data." << endl;
+        return;
+    }
+
+    // For term name
+    file << "School Term: " << termName << endl;
+
+    // For headers
+    for (int i = 0; i < sheetCount; i++)
+    {
+        file << "Sheet: " << database[i].sheetName << endl;
+        for (int j = 0; j < database[i].numOfCol; j++)
+        {
+            file << database[i].colName[j] << ",";
+        }
+        file << endl;
+
+        // Write the data
+        for (int r = 0; r < database[i].rowCount; r++)
+        {
+            for (int c = 0; c < database[i].numOfCol; c++)
+            {
+                file << database[i].data[r][c] << ",";
+            }
+            file << endl;
+        }
+    }
+
+    file.close();
+    cout << "Data saved successfully to Student_Attendance_Tracker 2_data.csv" << endl;
+}
+
+// Function to load data from CSV file
+void loadFromFile()
+{
+    ifstream file("C:\\Users\\USER01\\Documents\\ADIK\\Programming Fundamentals\\Milestone 2\\CCP6114-Programming-Fundamentals-Assignment-40-\\Student_Attendance_Tracker 2_data.csv");
+    if (!file.is_open())
+    {
+        cout << "Error when opening file to load data." << endl;
+        return;
+    }
+
+    string line;
+    getline(file, line);
+
+    while (getline(file, line))
+    {
+        if (line.find("Sheet:") != string::npos)
+        {
+            string sheetName = line.substr(7);
+            string colNames[10];
+            string colTypes[10];
+
+            // Read col names and types
+            getline(file, line);
+            int colCount = 0;
+            size_t pos = 0;
+            while ((pos = line.find(',')) != string::npos)
+            {
+                colNames[colCount] = line.substr(0, pos);
+                line.erase(0, pos + 1);
+                colTypes[colCount] = (line == "INT") ? "INT" : "TEXT";
+                colCount++;
+            }
+
+            // Load data for the sheet
+            int rowCount = 0;
+            while (getline(file, line) && !line.empty())
+            {
+                size_t pos = 0;
+                int colIndex = 0;
+                while ((pos = line.find(',')) != string::npos)
+                {
+                    database[sheetCount].data[rowCount][colIndex] = line.substr(0, pos);
+                    line.erase(0, pos + 1);
+                    colIndex++;
+                }
+                rowCount++;
+            }
+        }
+    }
+
+    file.close();
+    cout << "Data loaded successfully from Student_Attendance_Tracker 2_data.csv" << endl;
+}
+
 int main()
 {
     // VARIABLES
@@ -208,6 +301,10 @@ int main()
         getline(cin, termName);
     }
     viewTermName();
+
+    // Load existing data from file
+    loadFromFile();
+
     while (true)
     {
         int choice;
@@ -238,6 +335,10 @@ int main()
         else if (choice == 3)
         {
             CountRows();
+        }
+        else if (choice == 4)
+        {
+            saveToFile();
         }
     }
 
