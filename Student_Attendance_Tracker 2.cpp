@@ -195,7 +195,7 @@ void sheetCreation()
 // Function to save data to CSV file
 void saveToFile()
 {
-    ofstream file("C:\\Users\\USER01\\Documents\\ADIK\\Programming Fundamentals\\Milestone 2\\CCP6114-Programming-Fundamentals-Assignment-40-\\Student_Attendance_Tracker 2_data.csv");
+    ofstream file("Student_Attendance_Tracker 2_data.csv");
     if (!file.is_open())
     {
         cout << "Error when opening file to save data." << endl;
@@ -233,10 +233,10 @@ void saveToFile()
 // Function to load data from CSV file
 void loadFromFile()
 {
-    ifstream file("C:\\Users\\USER01\\Documents\\ADIK\\Programming Fundamentals\\Milestone 2\\CCP6114-Programming-Fundamentals-Assignment-40-\\Student_Attendance_Tracker 2_data.csv");
+    ifstream file("Student_Attendance_Tracker 2_data.csv");
     if (!file.is_open())
     {
-        cout << "Error when opening file to load data." << endl;
+        cout << "Yes, looks like it's a new file / Error when opening file to load data." << endl;
         return;
     }
 
