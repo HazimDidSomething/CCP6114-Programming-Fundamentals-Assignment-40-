@@ -236,7 +236,7 @@ void loadFromFile()
     ifstream file("Student_Attendance_Tracker 2_data.csv");
     if (!file.is_open())
     {
-        cout << "Yes, looks like it's a new file / Error when opening file to load data." << endl;
+        cout << "Data created and loaded" << endl;
         return;
     }
 
