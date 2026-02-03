@@ -17,7 +17,7 @@
 // *********************************************************
 
 #include <iostream>
-#include <fstream> // For file handling
+#include <fstream>
 #include <string>
 #include <limits>
 #include <cctype>
@@ -260,7 +260,7 @@ void loadFromFile()
     ifstream file("Student_Attendance_Tracker 2_data.csv");
     if (!file.is_open())
     {
-        cout << "Data created and loaded" << endl;
+        cout << "Data hasn't been created yet" << endl;
         return;
     }
 
