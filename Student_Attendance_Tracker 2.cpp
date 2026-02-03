@@ -36,7 +36,6 @@ bool isInteger(const string &s)
     return true;
 }
 
-// Structure to hold attendance sheet data ( database )
 struct Attendancesheet
 {
     string sheetName;
@@ -227,15 +226,24 @@ void saveToFile()
     }
 
     // For term name
-    file << "School Term: " << termName << endl;
+    file << "School Term:," << termName << endl;
 
     // For headers
     for (int i = 0; i < sheetCount; i++)
     {
-        file << "Sheet: " << database[i].sheetName << endl;
+        file << "Sheet:," << database[i].sheetName << endl;
+        // Save column names
         for (int j = 0; j < database[i].numOfCol; j++)
         {
-            file << database[i].colName[j] << ",";
+            file << database[i].colName[j];
+            if (j < database[i].numOfCol - 1) file << ",";
+        }
+        file << endl;
+        // Save column types
+        for (int j = 0; j < database[i].numOfCol; j++)
+        {
+            file << database[i].colType[j];
+            if (j < database[i].numOfCol - 1) file << ",";
         }
         file << endl;
 
@@ -244,10 +252,13 @@ void saveToFile()
         {
             for (int c = 0; c < database[i].numOfCol; c++)
             {
-                file << database[i].data[r][c] << ",";
+                file << database[i].data[r][c];
+                if (c < database[i].numOfCol - 1) file << ",";
             }
             file << endl;
         }
+        // Blank line between sheets
+        file << endl;
     }
 
     file.close();
@@ -265,42 +276,58 @@ void loadFromFile()
     }
 
     string line;
-    getline(file, line);
-
+    sheetCount = 0;
     while (getline(file, line))
     {
-        if (line.find("Sheet:") != string::npos)
+        if (line.find("School Term:") == 0)
         {
-            string sheetName = line.substr(7);
-            string colNames[10];
-            string colTypes[10];
+            size_t pos = line.find(',');
+            if (pos != string::npos)
+                termName = line.substr(pos + 1);
+        }
+        else if (line.find("Sheet:") == 0)
+        {
+            Attendancesheet &sheet = database[sheetCount];
+            sheet.sheetName = line.substr(line.find(',') + 1);
 
-            // Read col names and types
+            // Read column names
             getline(file, line);
             int colCount = 0;
-            size_t pos = 0;
-            while ((pos = line.find(',')) != string::npos)
+            size_t start = 0, end;
+            while ((end = line.find(',', start)) != string::npos)
             {
-                colNames[colCount] = line.substr(0, pos);
-                line.erase(0, pos + 1);
-                colTypes[colCount] = (line == "INT") ? "INT" : "TEXT";
-                colCount++;
+                sheet.colName[colCount++] = line.substr(start, end - start);
+                start = end + 1;
             }
+            sheet.colName[colCount++] = line.substr(start);
+            sheet.numOfCol = colCount;
 
-            // Load data for the sheet
-            int rowCount = 0;
-            while (getline(file, line) && !line.empty())
+            // Read column types
+            getline(file, line);
+            start = 0; colCount = 0;
+            while ((end = line.find(',', start)) != string::npos)
             {
-                size_t pos = 0;
-                int colIndex = 0;
-                while ((pos = line.find(',')) != string::npos)
-                {
-                    database[sheetCount].data[rowCount][colIndex] = line.substr(0, pos);
-                    line.erase(0, pos + 1);
-                    colIndex++;
-                }
-                rowCount++;
+                sheet.colType[colCount++] = line.substr(start, end - start);
+                start = end + 1;
             }
+            sheet.colType[colCount++] = line.substr(start);
+
+            // Read data rows
+            sheet.rowCount = 0;
+            while (getline(file, line))
+            {
+                if (line.empty()) break;
+                start = 0;
+                int colIdx = 0;
+                while ((end = line.find(',', start)) != string::npos && colIdx < sheet.numOfCol - 1)
+                {
+                    sheet.data[sheet.rowCount][colIdx++] = line.substr(start, end - start);
+                    start = end + 1;
+                }
+                sheet.data[sheet.rowCount][colIdx] = line.substr(start);
+                sheet.rowCount++;
+            }
+            sheetCount++;
         }
     }
 
@@ -318,9 +345,9 @@ void editSheet(int index)
     while (true)
     {
         cout << "do you want to view the sheet or edit (1 = view , 2 = edit  and 0 = back)" << endl;
-        getline(cin, input); // read as string
+        getline(cin, input); 
 
-        if (!isInteger(input)) // check if input is a valid integer
+        if (!isInteger(input)) 
         {
             cout << "Invalid input. Please enter a number.\n";
             continue;
@@ -434,15 +461,209 @@ int chooseSheet()
     return -1;
 }
 
+int getValidatedMenuChoice(int min, int max)
+{
+    string input;
+    int choice;
+
+    while (true)
+    {
+        cout << "Choice: ";
+        getline(cin, input);
+
+        if (!isInteger(input))
+        {
+            cout << "Invalid input. Numbers only.\n";
+            continue;
+        }
+
+        choice = stoi(input);
+
+        if (choice < min || choice > max)
+        {
+            cout << "Invalid choice. Enter between "
+                 << min << " and " << max << ".\n";
+            continue;
+        }
+
+        return choice;
+    }
+}
+
+// ---------- Update Row ----------
+void updateRow(int sheetIdx)
+{
+    Attendancesheet &sheet = database[sheetIdx];
+    if (sheet.rowCount == 0)
+    {
+        cout << "No rows to update in this sheet.\n";
+        return;
+    }
+
+    string studentID;
+    cout << "Enter Student ID to update: ";
+    getline(cin, studentID);
+
+    int idCol = -1;
+    for (int i = 0; i < sheet.numOfCol; i++)
+    {
+        string col = sheet.colName[i];
+        for (auto &c : col) c = tolower(c);
+        if (col.find("id") != string::npos)
+        {
+            idCol = i;
+            break;
+        }
+    }
+    if (idCol == -1)
+    {
+        cout << "No Student ID column found in this sheet.\n";
+        return;
+    }
+
+    int rowIdx = -1;
+    for (int r = 0; r < sheet.rowCount; r++)
+    {
+        if (sheet.data[r][idCol] == studentID)
+        {
+            rowIdx = r;
+            break;
+        }
+    }
+    if (rowIdx == -1)
+    {
+        cout << "Student ID not found.\n";
+        return;
+    }
+
+    cout << "Row found. Enter new values (leave blank to keep current):\n";
+    for (int i = 0; i < sheet.numOfCol; i++)
+    {
+        cout << sheet.colName[i] << " [" << sheet.data[rowIdx][i] << "]: ";
+        string input;
+        getline(cin, input);
+        if (!input.empty())
+        {
+            if (sheet.colType[i] == "INT")
+            {
+                if (!isInteger(input))
+                {
+                    cout << "Invalid integer. Value unchanged.\n";
+                    continue;
+                }
+                if (sheet.colName[i].find("Status") != string::npos)
+                {
+                    int v = stoi(input);
+                    if (v != 0 && v != 1)
+                    {
+                        cout << "Only 0 or 1 allowed for Status. Value unchanged.\n";
+                        continue;
+                    }
+                }
+            }
+            sheet.data[rowIdx][i] = input;
+        }
+    }
+    cout << "\nRow updated successfully.\n";
+    cout << "\nUpdated Sheet:\n";
+    displayCSV(sheet);
+    cout << "\nPress Enter to continue.";
+    cin.get();
+}
+
+// ---------- Delete Row ----------
+void deleteRow(int sheetIdx)
+{
+    Attendancesheet &sheet = database[sheetIdx];
+    if (sheet.rowCount == 0)
+    {
+        cout << "No rows to delete in this sheet.\n";
+        return;
+    }
+
+    string studentID;
+    cout << "Enter Student ID to delete: ";
+    getline(cin, studentID);
+
+    int idCol = -1;
+    for (int i = 0; i < sheet.numOfCol; i++)
+    {
+        string col = sheet.colName[i];
+        for (auto &c : col) c = tolower(c);
+        if (col.find("id") != string::npos)
+        {
+            idCol = i;
+            break;
+        }
+    }
+    if (idCol == -1)
+    {
+        cout << "No Student ID column found in this sheet.\n";
+        return;
+    }
+
+    int rowIdx = -1;
+    for (int r = 0; r < sheet.rowCount; r++)
+    {
+        if (sheet.data[r][idCol] == studentID)
+        {
+            rowIdx = r;
+            break;
+        }
+    }
+    if (rowIdx == -1)
+    {
+        cout << "Student ID not found.\n";
+        return;
+    }
+
+    for (int r = rowIdx; r < sheet.rowCount - 1; r++)
+    {
+        for (int c = 0; c < sheet.numOfCol; c++)
+        {
+            sheet.data[r][c] = sheet.data[r + 1][c];
+        }
+    }
+    sheet.rowCount--;
+    cout << "\nRow deleted successfully.\n";
+    cout << "\nUpdated Sheet:\n";
+    displayCSV(sheet);
+    cout << "\nPress Enter to continue.";
+    cin.get();
+}
+
+// ---------- Delete Sheet ----------
+void deleteSheet()
+{
+    if (sheetCount == 0)
+    {
+        cout << "No sheets to delete.\n";
+        return;
+    }
+    for (int i = 0; i < sheetCount; i++)
+        cout << i + 1 << ". " << database[i].sheetName << endl;
+    cout << "Enter sheet number to delete: ";
+    string input;
+    getline(cin, input);
+    if (!isInteger(input))
+    {
+        cout << "Invalid input.\n";
+        return;
+    }
+    int idx = stoi(input) - 1;
+    if (idx < 0 || idx >= sheetCount)
+    {
+        cout << "Invalid sheet number.\n";
+        return;
+    }
+    for (int i = idx; i < sheetCount - 1; i++)
+        database[i] = database[i + 1];
+    sheetCount--;
+    cout << "Sheet deleted successfully.\n";
+}
+
 int main()
 {
-    // VARIABLES
-    string SheetName, ColName[10], ColType[10], TypeChecker;
-    int NumOfCol, ColCount = 0;
-    const int MAX_ROWS = 50;
-    string sheet[MAX_ROWS][10];
-    int rowCount = 0;
-
     cout << "Enter School Term Name (e.g., Trimester 2530): " << endl;
     getline(cin, termName);
     while (termName.empty())
@@ -451,7 +672,6 @@ int main()
         getline(cin, termName);
     }
     viewTermName();
-    int choice;
 
     // Load existing data from file
     loadFromFile();
@@ -467,9 +687,16 @@ int main()
         cout << "6. Update/Delete Record\n";
         cout << "7. delete sheet\n";
         cout << "0. Exit\n";
+        // Use getline for input consistency
+        string input;
         cout << "Choice: ";
-        cin >> choice;
-        cin.ignore();
+        getline(cin, input);
+        if (!isInteger(input))
+        {
+            cout << "Invalid input. Numbers only.\n";
+            continue;
+        }
+        int choice = stoi(input);
 
         if (choice == 0)
             break;
@@ -486,6 +713,30 @@ int main()
             int sheetID = chooseSheet();
             if (sheetID != -1)
                 editSheet(sheetID);
+        }
+        else if (choice == 6)
+        {
+            int sheetID = chooseSheet();
+            if (sheetID != -1)
+            {
+                cout << "1. Update Row\n2. Delete Row\nChoice: ";
+                string subChoice;
+                getline(cin, subChoice);
+                if (subChoice == "1")
+                    updateRow(sheetID);
+                else if (subChoice == "2")
+                    deleteRow(sheetID);
+                else
+                    cout << "Invalid choice.\n";
+            }
+        }
+        else if (choice == 7)
+        {
+            deleteSheet();
+        }
+        else
+        {
+            cout << "Invalid choice.\n";
         }
     }
 
