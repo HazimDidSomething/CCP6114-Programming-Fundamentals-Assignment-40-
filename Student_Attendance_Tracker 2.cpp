@@ -434,6 +434,36 @@ int chooseSheet()
     return -1;
 }
 
+int getValidatedMenuChoice(int min, int max)
+{
+    string input;
+    int choice;
+
+    while (true)
+    {
+        cout << "Choice: ";
+        getline(cin, input);
+
+        if (!isInteger(input))
+        {
+            cout << "Invalid input. Numbers only.\n";
+            continue;
+        }
+
+        choice = stoi(input);
+
+        if (choice < min || choice > max)
+        {
+            cout << "Invalid choice. Enter between "
+                 << min << " and " << max << ".\n";
+            continue;
+        }
+
+        return choice;
+    }
+}
+
+
 int main()
 {
     // VARIABLES
