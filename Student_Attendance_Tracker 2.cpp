@@ -17,7 +17,7 @@
 // *********************************************************
 
 #include <iostream>
-#include <fstream>  // For file handling
+#include <fstream> // For file handling
 #include <string>
 #include <limits>
 #include <cctype>
@@ -49,6 +49,30 @@ struct Attendancesheet
 Attendancesheet database[10];
 int sheetCount = 0;
 string termName;
+
+void displayCSV(const Attendancesheet &sheet)
+{
+    // Print column headers
+    for (int i = 0; i < sheet.numOfCol; i++)
+    {
+        cout << sheet.colName[i];
+        if (i < sheet.numOfCol - 1)
+            cout << ", ";
+    }
+    cout << endl;
+
+    // Print rows
+    for (int i = 0; i < sheet.rowCount; i++)
+    {
+        for (int j = 0; j < sheet.numOfCol; j++)
+        {
+            cout << sheet.data[i][j];
+            if (j < sheet.numOfCol - 1)
+                cout << ", ";
+        }
+        cout << endl;
+    }
+}
 
 // Function to count total rows across all sheets
 void CountRows()
@@ -284,6 +308,132 @@ void loadFromFile()
     cout << "Data loaded successfully from Student_Attendance_Tracker 2_data.csv" << endl;
 }
 
+// ---------- Edit Sheet ----------
+void editSheet(int index)
+{
+    Attendancesheet &sheet = database[index];
+    char addMore = 'Y';
+    int mode;
+    string input;
+    while (true)
+    {
+        cout << "do you want to view the sheet or edit (1 = view , 2 = edit  and 0 = back)" << endl;
+        getline(cin, input); // read as string
+
+        if (!isInteger(input)) // check if input is a valid integer
+        {
+            cout << "Invalid input. Please enter a number.\n";
+            continue;
+        }
+        mode = stoi(input);
+        if (mode == 1)
+        {
+            // ----------- DISPLAY THE ATTENDANCE SHEET IN CSV FORMAT -----------
+            cout << "\n-------------------------------------------" << endl;
+            cout << "View Attendance Sheet (CSV Mode)" << endl;
+            cout << "-------------------------------------------" << endl;
+            displayCSV(sheet);
+
+            cout << "\nPress Enter to go back.";
+            cin.get();
+            return;
+        }
+
+        else if (mode == 2)
+        {
+            while (toupper(addMore) == 'Y' && sheet.rowCount < 50)
+            {
+                for (int i = 0; i < sheet.numOfCol; i++)
+                {
+                    string input;
+                    while (true)
+                    {
+                        cout << sheet.colName[i] << ": ";
+                        getline(cin, input);
+
+                        if (sheet.colType[i] == "INT")
+                        {
+                            if (!isInteger(input))
+                            {
+                                cout << "Enter integer only.\n";
+                                continue;
+                            }
+                            int v = stoi(input);
+                            if (sheet.colName[i].find("Status") != string::npos &&
+                                v != 0 && v != 1)
+                            {
+                                cout << "Only 0 or 1 allowed.\n";
+                                continue;
+                            }
+                        }
+                        else
+                        {
+                            if (input.empty())
+                            {
+                                cout << "Text cannot be empty.\n";
+                                continue;
+                            }
+                        }
+
+                        sheet.data[sheet.rowCount][i] = input;
+                        break;
+                    }
+                }
+
+                sheet.rowCount++;
+
+                cout << "Add another row? (Y/N): ";
+                cin >> addMore;
+                cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            }
+            // ----------- DISPLAY THE ATTENDANCE SHEET IN CSV FORMAT -----------
+            cout << "\n-------------------------------------------" << endl;
+            cout << "View Attendance Sheet (CSV Mode)" << endl;
+            cout << "-------------------------------------------" << endl;
+            displayCSV(sheet);
+
+            cout << "\nPress Enter to go back.";
+            cin.get();
+            return;
+        }
+        else if (mode == 0)
+        {
+            return;
+        }
+        else
+        {
+            cout << "invalid in put" << endl;
+        }
+    }
+}
+
+// ---------- Choose Sheet ----------
+int chooseSheet()
+{
+    if (sheetCount == 0)
+    {
+        cout << "No sheets available.\n";
+        return -1;
+    }
+
+    for (int i = 0; i < sheetCount; i++)
+        cout << i + 1 << ". " << database[i].sheetName << endl;
+
+    string input;
+    cout << "Choose sheet number: ";
+    getline(cin, input);
+
+    if (isInteger(input))
+    {
+        int c = stoi(input);
+        if (c >= 1 && c <= sheetCount)
+            return c - 1;
+    }
+
+    cout << "Invalid selection.\n";
+    return -1;
+}
+
 int main()
 {
     // VARIABLES
@@ -301,44 +451,41 @@ int main()
         getline(cin, termName);
     }
     viewTermName();
+    int choice;
 
     // Load existing data from file
     loadFromFile();
 
     while (true)
     {
-        int choice;
-        cout << "\n[" << termName << " - MAIN MENU]" << endl;
-        cout << "1. Create New Sheet (Member 1)" << endl;
-        cout << "2. View Term Name (Member 1)" << endl;
-        cout << "3. Count Total Rows (Member 1)" << endl;
-        cout << "4. Save/Load Data (Member 2)" << endl;
-        cout << "5. Update/Delete Record (Member 3)" << endl;
-        cout << "0. Exit" << endl;
+        cout << "\n--- MAIN MENU ---\n";
+        cout << "1. Create Sheet\n";
+        cout << "2. View Term\n";
+        cout << "3. Count Rows\n";
+        cout << "4. Save Data\n";
+        cout << "5. View/add data to Sheet\n";
+        cout << "6. Update/Delete Record\n";
+        cout << "7. delete sheet\n";
+        cout << "0. Exit\n";
         cout << "Choice: ";
         cin >> choice;
         cin.ignore();
 
         if (choice == 0)
-        {
-            cout << "Exiting program..." << endl;
             break;
-        }
         else if (choice == 1)
-        {
             sheetCreation();
-        }
         else if (choice == 2)
-        {
             viewTermName();
-        }
         else if (choice == 3)
-        {
             CountRows();
-        }
         else if (choice == 4)
-        {
             saveToFile();
+        else if (choice == 5)
+        {
+            int sheetID = chooseSheet();
+            if (sheetID != -1)
+                editSheet(sheetID);
         }
     }
 
