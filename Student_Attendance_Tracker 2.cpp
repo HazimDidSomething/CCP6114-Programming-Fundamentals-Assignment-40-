@@ -12,7 +12,7 @@
 // Task Distribution
 // Member_1: Milestone 1: Sheet & Column Setup | Milestone 2: Database Management & Structuring
 // Member_2: Milestone 1: Data Entry & Validation |  Milestone 2: Data Modification (Update/Delete)
-// Member_3: Milestone 1: CSV Display & Output | Milestone2: File I/O (Persistance)
+// Member_3: Milestone 1: CSV Display & Output | Milestone2: File I/O (Persistence)
 // Member_4: Milestone 1: Documentation & Header | Milestone2: Advanced Validation & Final Assembly
 // *********************************************************
 
