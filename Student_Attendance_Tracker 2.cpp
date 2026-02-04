@@ -10,10 +10,10 @@
 // Member_4: 253UC245TK | Aqeef Azizi bin Nor Azizi | aqeef.azizi.nor1@student.mmu.edu.my
 // *********************************************************
 // Task Distribution
-// Member_1:
-// Member_2:
-// Member_3:
-// Member_4:
+// Member_1: Milestone 1: Sheet & Column Setup | Milestone 2: Database Management & Structuring
+// Member_2: Milestone 1: Data Entry & Validation |  Milestone 2: Data Modification (Update/Delete)
+// Member_3: Milestone 1: CSV Display & Output | Milestone2: File I/O (Persistance)
+// Member_4: Milestone 1: Documentation & Header | Milestone2: Advanced Validation & Final Assembly
 // *********************************************************
 
 #include <iostream>
